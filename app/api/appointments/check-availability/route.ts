@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/app/lib/supabase";
+import { validateSubscriptionForDoctor } from "@/app/utils/subscription-api.utils";
 
 export async function POST(request: Request) {
   try {
@@ -9,6 +10,16 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "doctor_id y start_time son requeridos" },
         { status: 400 }
+      );
+    }
+
+    const subscriptionCheck = await validateSubscriptionForDoctor(doctor_id);
+    if (!subscriptionCheck.valid) {
+      return NextResponse.json(
+        {
+          error: "No tienes una suscripción activa",
+        },
+        { status: 403 }
       );
     }
 

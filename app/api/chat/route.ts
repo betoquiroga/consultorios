@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { validateSubscriptionForDoctor } from "@/app/utils/subscription-api.utils";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -31,6 +32,16 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "doctor_id es requerido" },
         { status: 400 }
+      );
+    }
+
+    const subscriptionCheck = await validateSubscriptionForDoctor(doctor_id);
+    if (!subscriptionCheck.valid) {
+      return NextResponse.json(
+        {
+          error: "No tienes una suscripción activa",
+        },
+        { status: 403 }
       );
     }
 

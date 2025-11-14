@@ -26,7 +26,7 @@ export function SignupForm() {
 
     if (response.success) {
       toast.success(response.message);
-      router.push("/login");
+      router.push("/subscription/checkout");
     } else {
       toast.error(response.message);
     }

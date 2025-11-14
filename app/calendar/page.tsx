@@ -11,6 +11,8 @@ import { MonthView } from "../components/calendar/MonthView";
 import { WeekView } from "../components/calendar/WeekView";
 import { DayView } from "../components/calendar/DayView";
 import { CreateAppointmentModal } from "../components/calendar/CreateAppointmentModal";
+import { SubscriptionStatus } from "../components/subscription/SubscriptionStatus";
+import { AppHeader } from "../components/shared/AppHeader";
 import type { AppointmentView } from "../types/appointment.type";
 import { getDateRangeForView } from "../utils/calendar.utils";
 
@@ -90,8 +92,11 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-black">
+      <AppHeader />
+      <div className="pt-24 p-6">
+        <div className="max-w-7xl mx-auto">
+        <SubscriptionStatus />
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <CalendarNavigation
             currentDate={currentDate}
@@ -140,6 +145,7 @@ export default function CalendarPage() {
               )}
             </>
           )}
+        </div>
         </div>
       </div>
 

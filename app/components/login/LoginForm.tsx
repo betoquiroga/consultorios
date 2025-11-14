@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import { LogIn } from "lucide-react";
 import { Input } from "./Input";
 import { loginService } from "../../services/login.service";
+import { subscriptionService } from "../../services/subscription.service";
+import { isSubscriptionActive } from "../../utils/subscription.utils";
 
 export function LoginForm() {
   const router = useRouter();
@@ -19,7 +21,18 @@ export function LoginForm() {
 
     if (response.success) {
       toast.success(response.message);
-      router.push("/");
+      
+      const subscriptionStatus = await subscriptionService.getSubscriptionStatus();
+      
+      if (
+        subscriptionStatus.success &&
+        subscriptionStatus.subscription &&
+        isSubscriptionActive(subscriptionStatus.subscription)
+      ) {
+        router.push("/calendar");
+      } else {
+        router.push("/subscription/checkout");
+      }
     } else {
       toast.error(response.message);
     }

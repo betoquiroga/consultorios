@@ -1,14 +1,17 @@
 "use client";
 
 import { DoctorCard } from "../components/doctors/DoctorCard";
+import { AppHeader } from "../components/shared/AppHeader";
 import { useDoctors } from "../hooks/useDoctors";
 
 export default function DoctorsPage() {
   const { data: doctors = [], isLoading, error } = useDoctors();
 
   return (
-    <div className="min-h-screen bg-zinc-50 py-8 dark:bg-black">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-zinc-50 dark:bg-black">
+      <AppHeader />
+      <div className="pt-24 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
             Doctores Disponibles
@@ -50,6 +53,7 @@ export default function DoctorsPage() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
