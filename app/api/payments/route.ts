@@ -14,15 +14,19 @@ async function getServerSupabaseClient(request: Request) {
   const cookieStore = await cookies();
   const authHeader = request.headers.get('authorization');
   
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
+  const supabase = createClient(
+    supabaseUrl as string,
+    supabaseAnonKey as string,
+    {
+      // @ts-expect-error - Supabase types don't fully support cookies option in all contexts
+      cookies: {
       get(name: string) {
         return cookieStore.get(name)?.value;
       },
-      set(name: string, value: string, options: any) {
+      set(name: string, value: string, options?: Record<string, unknown>) {
         cookieStore.set(name, value, options);
       },
-      remove(name: string, options: any) {
+      remove(name: string) {
         cookieStore.delete(name);
       },
     },

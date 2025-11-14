@@ -12,8 +12,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 async function getServerSupabaseClient() {
   const cookieStore = await cookies();
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
+  const supabase = createClient(
+    supabaseUrl as string,
+    supabaseAnonKey as string,
+    {
+      // @ts-expect-error - Supabase types don't fully support cookies option in all contexts
+      cookies: {
       get(name: string) {
         return cookieStore.get(name)?.value;
       },

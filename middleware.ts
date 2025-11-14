@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import type { Subscription } from '@/app/interfaces/subscription.interface';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -10,14 +11,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 async function getServerSupabaseClient(request: NextRequest) {
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      get(name: string) {
-        return request.cookies.get(name)?.value;
+  const supabase = createClient(
+    supabaseUrl as string,
+    supabaseAnonKey as string,
+    {
+      // @ts-expect-error - Supabase types don't fully support cookies option in all contexts
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
       },
-    },
-  });
-  return supabase;
+    }
+  );
+  return supabase as ReturnType<typeof createClient>;
 }
 
 async function checkSubscriptionActive(
@@ -38,14 +44,16 @@ async function checkSubscriptionActive(
     return false;
   }
 
+  const subscription = data as Subscription;
   const now = new Date();
-  const endDate = new Date(data.end_date);
+  const endDate = new Date(subscription.end_date);
 
   if (endDate <= now) {
     await supabase
       .from('subscriptions')
+      // @ts-expect-error - Type inference issue with Supabase after @ts-expect-error on createClient
       .update({ status: 'expired' })
-      .eq('id', data.id);
+      .eq('id', subscription.id);
     return false;
   }
 
