@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Calendar, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
 import type { AppointmentWithPatient } from "../../interfaces/appointment.interface";
 import {
   getDaysInMonth,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { X } from "lucide-react";
 import { PatientAutocomplete } from "./PatientAutocomplete";
 import type { Patient } from "../../services/patient.service";
@@ -23,27 +23,23 @@ export function CreateAppointmentModal({
 }: CreateAppointmentModalProps) {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
   const [reason, setReason] = useState("");
 
-  useEffect(() => {
+  const endTime = useMemo(() => {
     if (startTime) {
       const start = new Date(startTime);
       const end = new Date(start.getTime() + 30 * 60 * 1000);
-      setEndTime(end.toISOString().slice(0, 16));
-    } else {
-      setEndTime("");
+      return end.toISOString().slice(0, 16);
     }
+    return "";
   }, [startTime]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setSelectedPatient(null);
-      setStartTime("");
-      setEndTime("");
-      setReason("");
-    }
-  }, [isOpen]);
+  const handleClose = () => {
+    setSelectedPatient(null);
+    setStartTime("");
+    setReason("");
+    onClose();
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,7 +63,7 @@ export function CreateAppointmentModal({
       <div className="relative w-full max-w-md rounded-xl border border-gray-800 bg-gray-900/95 p-6 shadow-xl">
         <button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute right-4 top-4 text-gray-400 hover:text-gray-200 transition-colors"
         >
           <X className="h-5 w-5" />
@@ -127,7 +123,7 @@ export function CreateAppointmentModal({
           <div className="flex gap-3 pt-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="flex-1 rounded-lg border border-gray-700 bg-gray-800 px-6 py-3 font-medium text-gray-200 transition-colors duration-200 hover:bg-gray-700"
             >
               Cancelar

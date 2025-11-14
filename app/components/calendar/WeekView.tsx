@@ -8,7 +8,6 @@ import {
   isSameDay,
   isToday,
   formatTime,
-  formatDate,
 } from "../../utils/calendar.utils";
 
 type WeekViewProps = {
@@ -77,8 +76,6 @@ export function WeekView({ currentDate, appointments }: WeekViewProps) {
                   {hourAppointments.map((apt) => {
                     const startTime = new Date(apt.start_time);
                     const endTime = new Date(apt.end_time);
-                    const duration =
-                      (endTime.getTime() - startTime.getTime()) / (1000 * 60);
 
                     return (
                       <div
