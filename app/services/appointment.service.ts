@@ -1,6 +1,12 @@
 import { supabase } from "../lib/supabase";
 import type { AppointmentWithPatient, GetAppointmentsParams } from "../interfaces/appointment.interface";
 
+export type CreateAppointmentParams = {
+  patient_id: string;
+  start_time: string;
+  reason: string;
+};
+
 export const appointmentService = {
   async getAppointments(
     params: GetAppointmentsParams
@@ -38,6 +44,31 @@ export const appointmentService = {
     }
 
     return (data as unknown as AppointmentWithPatient[]) || [];
+  },
+
+  async createAppointment(params: CreateAppointmentParams): Promise<void> {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("No hay sesión activa");
+    }
+
+    const startTime = new Date(params.start_time);
+    const endTime = new Date(startTime.getTime() + 30 * 60 * 1000);
+
+    const { error } = await supabase.from("appointments").insert({
+      doctor_id: session.user.id,
+      patient_id: params.patient_id,
+      start_time: startTime.toISOString(),
+      end_time: endTime.toISOString(),
+      reason: params.reason || null,
+    });
+
+    if (error) {
+      throw new Error(error.message || "Error al crear la cita");
+    }
   },
 };
 
