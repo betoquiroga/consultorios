@@ -1,0 +1,1 @@
+Siempre debes leer /docs para entender la documentación del proyecto y tienes PROHIBIDO actualizar esa documentación y tienes PROHIBIDO salirte de esos lineamientos.
