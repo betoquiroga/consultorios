@@ -1,0 +1,39 @@
+flowchart TD
+
+    %% Sección Doctor
+    subgraph Doctor_Web["Doctor - Panel Web"]
+    
+        LOGIN["/login\nFormulario de acceso"]
+        DASHBOARD["/dashboard\nRedirección inicial"]
+        CALENDAR["/calendar\nVista diaria/semanal del horario"]
+        NEW_APPOINTMENT["/calendar/new\nCrear nueva cita"]
+        VIEW_APPOINTMENT["/appointments/[id]\nDetalle de cita"]
+        DELETE_APPOINTMENT["Acción: eliminar cita"]
+        LOGOUT["Acción: logout"]
+        
+        LOGIN --> DASHBOARD
+        DASHBOARD --> CALENDAR
+        
+        CALENDAR --> NEW_APPOINTMENT
+        CALENDAR --> VIEW_APPOINTMENT
+        
+        VIEW_APPOINTMENT --> DELETE_APPOINTMENT
+        VIEW_APPOINTMENT --> CALENDAR
+        
+        CALENDAR --> LOGOUT
+    end
+    
+    
+    %% Sección Chat Paciente
+    subgraph Chat_Paciente["Paciente - Chat IA (embebido por doctor)"]
+    
+        CHAT_ENTRY["/chat/[doctorId]\nIngreso al chat"]
+        CHAT_FLOW["Flujo conversacional:\n- solicitar datos\n- validar disponibilidad\n- crear cita\n- confirmar horario"]
+        CHAT_END["Respuesta final de IA\n(cita confirmada o error)"]
+
+        CHAT_ENTRY --> CHAT_FLOW --> CHAT_END
+    end
+
+    %% Conexión lógica entre chat y agenda (vía API)
+    CHAT_FLOW -->|crear cita vía API| NEW_APPOINTMENT
+
