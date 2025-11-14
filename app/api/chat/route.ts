@@ -7,7 +7,7 @@ const openai = new OpenAI({
 
 export async function POST(request: Request) {
   try {
-    const { message } = await request.json();
+    const { message, previous_response_id } = await request.json();
 
     if (!message || typeof message !== "string") {
       return NextResponse.json(
@@ -24,18 +24,32 @@ export async function POST(request: Request) {
     }
 
     const systemPrompt =
-      "Eres un asistente especializado en agendar citas médicas. Tu única función es ayudar a los usuarios a programar, modificar o cancelar citas. Si el usuario solicita algo fuera de este ámbito, responde de manera breve y sarcástica indicando que no puedes ayudar con eso.";
+      "Eres un asistente especializado en agendar citas médicas. Tu única función es ayudar a los usuarios a programar, modificar o cancelar citas. SI el usuario saluda, se amable. Si el usuario solicita algo fuera de este ámbito de las citas médicas, responde de manera breve y sarcástica indicando que no puedes ayudar con eso.";
 
-    const response = await openai.responses.create({
+    const responseParams: {
+      model: string;
+      input: string;
+      instructions: string;
+      previous_response_id?: string;
+    } = {
       model: "gpt-4o",
       input: message,
       instructions: systemPrompt,
-    });
+    };
+
+    if (previous_response_id) {
+      responseParams.previous_response_id = previous_response_id;
+    }
+
+    const response = await openai.responses.create(responseParams);
 
     const assistantMessage =
       response.output_text || "No se pudo generar una respuesta";
 
-    return NextResponse.json({ message: assistantMessage });
+    return NextResponse.json({
+      message: assistantMessage,
+      response_id: response.id,
+    });
   } catch (error) {
     console.error("Error al procesar la solicitud:", error);
     return NextResponse.json(

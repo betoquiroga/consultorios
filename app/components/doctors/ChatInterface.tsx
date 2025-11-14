@@ -9,6 +9,7 @@ export function ChatInterface() {
   >([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [responseId, setResponseId] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,7 +31,10 @@ export function ChatInterface() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({
+          message: input,
+          previous_response_id: responseId || undefined,
+        }),
       });
 
       if (!response.ok) {
@@ -47,6 +51,10 @@ export function ChatInterface() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+
+      if (data.response_id) {
+        setResponseId(data.response_id);
+      }
     } catch (error) {
       const errorMessage = {
         id: (Date.now() + 1).toString(),
