@@ -15,7 +15,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
         </h1>
       </div>
       <div className="flex-1 overflow-hidden">
-        <ChatInterface />
+        <ChatInterface doctorId={id} />
       </div>
     </div>
   );

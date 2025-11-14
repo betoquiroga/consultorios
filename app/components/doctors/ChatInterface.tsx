@@ -3,13 +3,19 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
 
-export function ChatInterface() {
+type ChatInterfaceProps = {
+  doctorId: string;
+};
+
+export function ChatInterface({ doctorId }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<
     Array<{ id: string; role: "user" | "assistant"; content: string }>
   >([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [responseId, setResponseId] = useState<string | null>(null);
+  const [chatMessages, setChatMessages] = useState<
+    Array<{ role: string; content: string }>
+  >([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +39,8 @@ export function ChatInterface() {
         },
         body: JSON.stringify({
           message: input,
-          previous_response_id: responseId || undefined,
+          doctor_id: doctorId,
+          messages: chatMessages,
         }),
       });
 
@@ -52,8 +59,8 @@ export function ChatInterface() {
 
       setMessages((prev) => [...prev, assistantMessage]);
 
-      if (data.response_id) {
-        setResponseId(data.response_id);
+      if (data.messages) {
+        setChatMessages(data.messages);
       }
     } catch (error) {
       const errorMessage = {
